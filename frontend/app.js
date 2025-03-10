@@ -1,89 +1,39 @@
-class Chatbox {
-    constructor() {
-        this.args = {
-            openButton: document.querySelector('.chatbox__button'),
-            chatBox: document.querySelector('.chatbox__support'),
-            sendButton: document.querySelector('.send__button')
-        }
+document.addEventListener("DOMContentLoaded", function () {
+    const chatbox = document.getElementById("chatbox");
+    const userInput = document.getElementById("userInput");
 
-        this.state = false;
-        this.messages = [];
+    // Function to append messages in styled format
+    function appendMessage(sender, message, isBot = false) {
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message", isBot ? "bot" : "user");
+        msgDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        chatbox.appendChild(msgDiv);
+        chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll to latest message
     }
 
-    display() {
-        const { openButton, chatBox, sendButton } = this.args;
+    window.sendMessage = async function () {
+        const message = userInput.value.trim();
+        if (!message) return;
 
-        openButton.addEventListener('click', () => this.toggleState(chatBox))
+        appendMessage("You", message, false); // Append user message (Green, Right)
 
-        sendButton.addEventListener('click', () => this.onSendButton(chatBox))
-
-        const node = chatBox.querySelector('input');
-        node.addEventListener("keyup", ({ key }) => {
-            if (key === "Enter") {
-                this.onSendButton(chatBox)
-            }
-        })
-    }
-
-    toggleState(chatbox) {
-        this.state = !this.state;
-
-        // show or hides the box
-        if (this.state) {
-            chatbox.classList.add('chatbox--active')
-        } else {
-            chatbox.classList.remove('chatbox--active')
-        }
-    }
-
-    onSendButton(chatbox) {
-        var textField = chatbox.querySelector('input');
-        let text1 = textField.value
-        if (text1 === "") {
-            return;
-        }
-
-        let msg1 = { name: "User", message: text1 }
-        this.messages.push(msg1);
-
-        fetch('https://xxxyyyzzz.run.app', {
-            method: 'POST',
-            body: JSON.stringify({ message: text1 }),
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(r => r.json())
-            .then(r => {
-                let msg2 = { name: "Yashasvi", message: r.answer };
-                this.messages.push(msg2);
-                this.updateChatText(chatbox)
-                textField.value = ''
-
-            }).catch((error) => {
-                console.error('Error:', error);
-                this.updateChatText(chatbox)
-                textField.value = ''
+        try {
+            const response = await fetch("http://127.0.0.1:5000/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message }),
             });
-    }
 
-    updateChatText(chatbox) {
-        var html = '';
-        this.messages.slice().reverse().forEach(function (item, index) {
-            if (item.name === "Yashasvi") {
-                html += '<div class="messages__item messages__item--visitor">' + item.message + '</div>'
-            }
-            else {
-                html += '<div class="messages__item messages__item--operator">' + item.message + '</div>'
-            }
-        });
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
 
-        const chatmessage = chatbox.querySelector('.chatbox__messages');
-        chatmessage.innerHTML = html;
-    }
-}
+            const data = await response.json();
+            appendMessage("Bot", data.response, true); // Append bot message (Blue, Left)
 
+        } catch (error) {
+            console.error("Fetch error:", error);
+            appendMessage("Error", "Could not connect to chatbot.", true);
+        }
 
-const chatbox = new Chatbox();
-chatbox.display();
+        userInput.value = ""; // Clear input field
+    };
+});
