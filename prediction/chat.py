@@ -18,4 +18,4 @@ if __name__ == "__main__":
         msg = input("You: ")
         if msg.lower() == "exit":
             break
-        print("Bot:", get_response(msg))
+        print("MediBot:", get_response(msg))

@@ -8,7 +8,8 @@
         /* General Styling */
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #007BFF, #004080);
+            background: url('bot.webp') no-repeat center center fixed; /* Center and fix the background */
+            background-size: cover; 
             color: white;
             text-align: center;
             margin: 0;
@@ -28,12 +29,12 @@
         #chatbox {
             width: 350px;
             height: 450px;
-            background: #ffffff;
+            background-color: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(231, 95, 17, 0.2);
             padding: 15px;
             overflow-y: auto;
-            color: #333;
+            color: #3d89b3;
             display: flex;
             flex-direction: column;
         }
@@ -104,6 +105,11 @@
     <div class="input-container">
         <input type="text" id="userInput" placeholder="Type a message...">
         <button onclick="sendMessage()">Send</button>
+    </div>
+    <div style="margin-top: 20px;">
+        <a href="http://127.0.0.1:8000" target="_blank" style="text-decoration: none; color: blue; font-weight: bold;">
+            🔗 Back to eMedi
+        </a>
     </div>
 
     <script src="app.js"></script>
