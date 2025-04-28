@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from chat import get_response  # Ensure chat.py has get_response()
+from chat import get_response  
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend requests
+CORS(app)  
 
 @app.route("/", methods=["GET"])
 def home():
